@@ -1,14 +1,26 @@
 
 const express = require('express');
+const authController = require('./controllers/authController.js');
+const roleController = require('./controllers/roleController.js');
+const user_roleController = require('./controllers/user_roleController')
+
 const db = require('./db.js');
-const { User } = require('./models/index');
-const { Role } = require('./models/index');
-const { User_Role } = require('./models/index');
+const { User, Role, User_Role } = require('./models/index');
 require('dotenv').config();
+
+const router = require('./router')
+// const authRoutes = require('./views/authRouter');
+// const roleRoutes = require('./views/roleRouter');
+// const user_roleRoutes = require('./views/user_roleRouter')
 
 const app = express();
 
 app.use(express.json());
+
+app.use(router)
+// app.use(authRoutes);
+// app.use(roleRoutes);
+// app.use(user_roleRoutes);
 
 const PORT = 3000;
 
@@ -20,73 +32,15 @@ app.get('/welcome', (req, res) => {
 //     return res.send("Área de usuarios")
 // })
 
-app.post('/users', async(req, res) => {
-    // Recuperamos la informacion a traves de la req
-    // const name = req.body.name;
-    // const description = req.body.description;
-    // const price = req.body.price;
+// app.post('/users', authController.register)
 
-    const { name, surname, nif, birth_date, direction, email, phone, password } = req.body;
+// app.delete('/users/:id', authController.deleteUser)
 
-    const newUser = {
-        name: name,
-        surname: surname,
-        nif: nif,
-        birth_date: birth_date,
-        direction: direction,
-        email: email,
-        phone: phone,
-        password: password
-    }
+// app.get('/users', authController.findAllUsers)
 
-    // Guardar la informacion
-    const user = await User.create(newUser)
+// app.post('/roles', roleController.newPrivilege)
 
-    return res.json(user)
-})
-
-app.delete('/users/:id', async(req, res) => {
-    const userId = req.params.id;
-    
-    const deleteUser = await User.destroy({where: { id: userId}})
-
-    return res.json(deleteUser);
-})
-
-app.get('/users', async(req, res)=> {
-    const users = await User.findAll();
-
-    return res.json(users);
-})
-
-app.post('/roles', async(req, res) => {
-
-    const { privilege } = req.body;
-
-    const newPrivilege = {
-        privilege
-    }
-
-    // Guardar la informacion
-    const role = await Role.create(newPrivilege)
-
-    return res.json(role)
-})
-
-app.post('/user_roles', async(req, res) => {
-
-    const { user_id, role_id } = req.body;
-
-    const newUserRole = {
-        user_id,
-        role_id
-    }
-
-    // Guardar la informacion
-    const userRole = await User_Role.create(newUserRole)
-
-    return res.json(userRole)
-})
+// app.post('/user_roles', user_roleController.newUserRoler)
 
 db.then(() => {
     //Starting server
