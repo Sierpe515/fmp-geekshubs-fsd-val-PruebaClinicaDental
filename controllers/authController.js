@@ -40,4 +40,27 @@ authController.findAllUsers = async(req, res)=> {
     return res.json(users);
 };
 
+authController.getUserRoles = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const userRole = await User.findByPk(
+            userId,
+            {
+                include: {
+                    all: true
+                }
+            }
+        );
+
+        if (!userRole) {
+            return res.send('User Not found')
+        }
+
+        return res.json(userRole);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 module.exports = authController;
