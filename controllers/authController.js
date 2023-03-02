@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Role } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -38,7 +38,8 @@ authController.login = async (req, res) => {
             {
                 where: {
                     email: email
-                }
+                },
+                include: [Role]
             }
         );
 
@@ -52,11 +53,12 @@ authController.login = async (req, res) => {
             return res.send('Wrong Credentials. Wrong PW')
         }
 
+        const userRole = user.Roles
         const token = jwt.sign(
             { 
                 userId: user.id,
                 email: user.email,
-                // roleId: user.role_id
+                roleId: userRole.map((role) => role.privilege)
                 // Buscar forma de recoger role_id desde Array
             }, 
             'secreto',
@@ -77,10 +79,16 @@ authController.deleteUser = async(req, res) => {
     return res.json(deleteUser);
 };
 
-authController.findAllUsers = async(req, res)=> {
-    const users = await User.findAll();
 
+// PRUEBA DE FINALLUSERS CON UN ADMIN. LOGRADO!
+authController.findAllUsers = async(req, res)=> {
+    if (req.roleId[0] === 'admin'){
+    const users = await User.findAll();
+    
     return res.json(users);
+    } else {
+        return res.send('sigue sin ser admin')
+    }
 };
 
 authController.getUserRoles = async (req, res) => {

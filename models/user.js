@@ -17,12 +17,15 @@ module.exports = (sequelize, DataTypes) => {
           through: 'User_Roles',
           foreignKey: 'user_id'
         },
-        models.Service,
-        {
-          through: 'Appointments',
-          foreignKey: 'user_id'
-        }
       );
+
+      // User.hasMany(models.User_Role, {
+      //   foreignKey: 'user_id'
+      // })
+
+      User.hasMany(models.Appointment, {
+        foreignKey: 'user_id'
+      })
 
       User.hasMany(models.Employee, {
         foreignKey: 'user_id'

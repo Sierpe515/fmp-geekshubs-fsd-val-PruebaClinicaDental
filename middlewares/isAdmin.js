@@ -1,12 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-const verifyToken = (req, res, next) => {
+const isAdmin = (req, res, next) => {
     try {
         const authorization = req.headers.authorization;
-
-        if (!authorization) {
-            return res.send('Invalid token');
-        }
+        
+        if (req.roleId === "admin"){
 
         const [strategy, token] = authorization.split(" ");
 
@@ -14,12 +12,15 @@ const verifyToken = (req, res, next) => {
 
         req.userId = decoded.userId;
         req.roleId = decoded.roleId;
-        // Necesitamos recuperar antes la info de authController.login
 
-        next();
+        console.log("es admin")
+        next()
+      } else if (req.roleId != "admin"){
+        return res.send('no es admin')
+      }
     } catch (error) {
         return res.status(500).send(error.message)
     }
 }
 
-module.exports = verifyToken;
+module.exports = isAdmin;
