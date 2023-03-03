@@ -1,4 +1,4 @@
-const { User, Role } = require('../models');
+const { User, Role, User_Role } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -23,6 +23,11 @@ authController.register = async(req, res) => {
 
         // Guardar la informacion
         const user = await User.create(newUser)
+
+        await User_Role.create({
+            user_id : user.id,
+            role_id : 3
+        })
 
         return res.json(user)
     } catch (error) {
@@ -82,14 +87,28 @@ authController.deleteUser = async(req, res) => {
 
 // PRUEBA DE FINALLUSERS CON UN ADMIN. LOGRADO!
 authController.findAllUsers = async(req, res)=> {
-    if (req.roleId[0] === 'admin'){
-    const users = await User.findAll();
+    const isAdmin = req.roleId.includes('admin')
+
+
+    if (isAdmin) {
+        const users = await User.findAll();
     
-    return res.json(users);
+        return res.json(users);
     } else {
         return res.send('sigue sin ser admin')
     }
 };
+
+// authController.findAllUsers = (req, res)=> {
+//     req.roleId.map((role)=>{
+//         if(role === 'admin'){
+//             const users = User.findAll();
+//             return res.json(users);
+//         } else {
+//             return res.send('sigue sin ser admin')
+//         }
+//     })
+// };
 
 authController.getUserRoles = async (req, res) => {
     try {

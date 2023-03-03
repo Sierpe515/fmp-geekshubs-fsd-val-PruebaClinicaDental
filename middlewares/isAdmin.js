@@ -1,23 +1,14 @@
-const jwt = require('jsonwebtoken');
 
 const isAdmin = (req, res, next) => {
     try {
-        const authorization = req.headers.authorization;
-        
-        if (req.roleId === "admin"){
+      const isAdmin = req.roleId.includes('admin')
 
-        const [strategy, token] = authorization.split(" ");
 
-        const decoded = jwt.verify(token, 'secreto');
-
-        req.userId = decoded.userId;
-        req.roleId = decoded.roleId;
-
-        console.log("es admin")
-        next()
-      } else if (req.roleId != "admin"){
-        return res.send('no es admin')
+      if (!isAdmin) {
+        return res.status.send('es viernes');
       }
+
+      next()
     } catch (error) {
         return res.status(500).send(error.message)
     }
